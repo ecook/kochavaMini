@@ -1,0 +1,16 @@
+{
+  "name": "responseAgent",
+  "version": "0.1.0",
+  "description": "service to read from queue and post data objects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ed Cook",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "amqplib": "~0.3.2",
+    "stathat": "0.0.8"
+  }
+}
+

@@ -13,16 +13,29 @@ exports.isConnected = function() {
 
 };
 
-exports.initialize = function(){
-    var url = 'amqp://' + config.user + ':' + config.password + '@' + config.server + ':' + config.port + '/';
+exports.initialize = function(processMessage){
+    //var url = 'amqp://' + config.user + ':' + config.password + '@' + config.server + ':' + config.port + '/';
+    var url = 'amqp://' + config.server + ':' + config.port;
     console.log('attempt to connect to queue: ' + url);
     this.connection = amqp.connect(url);
 
     this.connection.then(function(conn){
         return conn.createChannel().then(function(ch) {
-            ch.assertQueue('attributes', {durable: true, autoDelete: false, exclusive: false});
+            ch.assertQueue(config.queueName, {durable: true, autoDelete: false, exclusive: false});
             console.log('channel confirmed');
-            this.channel = ch;
+            ch.consume(config.queueName, function(message) {
+                console.log(message.content.toString());
+                var success = processMessage(message.content.toString());
+                // TODO: have to cache the messages to verify delivery because stathat is asynchronous
+                //if (success) {
+                //    ch.ack(message);
+                //    console.log('ack message');
+                //}
+                //else {
+                //    ch.nack(message);
+                //    console.log('noack message');
+                //}
+            }, {noAck: true});
         })
     });
 
@@ -32,26 +45,6 @@ exports.sendMessage = function(exchange, messageObject) {
     if(this.channel){
         this.channel.publish(exchange, messageObject);
     }
-};
-
-exports.getMessage = function() {
-    if (this.channel) {
-
-        return this.channel.consume('attributes', function (msg) {
-
-            var jsonObj = JSON.parse(msg.content.toString());
-
-            return jsonObj;
-        });
-
-    } else {
-        console.log('getMessage: channel not available');
-        return null;
-    }
-};
-
-exports.acknowledge = function() {
-  this.channel.ack();
 };
 
 exports.close = function() {

@@ -3,6 +3,11 @@ Kochava Miniproject :: "Postback Delivery"
 architectural design: https://docs.google.com/drawings/d/1YFBGV5UFNv2AfbGh4b-sYHtJ-1LDSFiqmqLBPAvH3Z8/edit?usp=sharing
 git repo: https://github.com/ecook/kochavaMini.git
 
+
+
+
+
+
 how to setup server:
 
 install node and npm
@@ -20,9 +25,15 @@ install rabbitMQ
 	user: guest
 	pwd: guest
 
+	using the management panel, you can import the rabbit.json file to setup the queues and exchanges
+	->overview tab
+		bottom of the page, import, choose file. then click on upload broker definitions
+
 create directory for response agent and initialize node project
     // don't need to create new project, instead pull from git repo and skip this section
-    // NOTE: you will have to do an npm install from the responseAgent directory
+    // NOTE: you will have to do an npm install from the responseAgent directory and install composer for the
+    //       requestAgent.
+
         mkdir responseAgent
         cd responseAgent
         npm init

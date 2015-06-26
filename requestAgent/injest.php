@@ -49,7 +49,7 @@ foreach($obj['data'] as $array) {
         $body = '{"key":"' . $array['key'] . '", "value":"' . $array['value'] . '"}';
         $msg->setBody($body);
         echo " sending message\n";
-        $ch->basic_publish($msg, '', 'hello');
+        $ch->basic_publish($msg, 'attribute', 'attributeExchange');
 }
 
 //echo " closing channel and connection.\n";

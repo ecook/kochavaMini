@@ -3,9 +3,9 @@ var logger = require('./logger');
 var queue = require('./queue');
 var messageStore = require('./messageStore');
 
-queue.initialize();
-
 // wireup between queue and logger to keep them abstracted
+// so we could write directly to a file, but message queue is more efficient
+// TODO: need to flesh out the logging, or rather implement existing logging lib
 var logMessage = function(message) {
     if(queue.isConnected()){
         queue.sendMessage( 'log', message);
@@ -19,24 +19,30 @@ logger.initialize(config.instanceName, logMessage);
 
 // this is to capture Ctrl-C key press or process stop event
 process.once('SIGINT', function() {
-    clearInterval(interval);
     queue.close();
     messageStore.close();
     logger.close();
     process.exit();
 });
 
-// main loop that wires up the queue and data store end points
-var interval = setInterval(function() {
-
-    var message = queue.getMessage();
-
+// this is where we map the specific value to the message store
+var processMessage = function(message) {
     if(message) {
-        // this is where we map the specific value to the message store
-        messageStore.send(message.value);
 
-        // do this verify that the message is handled in case of responseAgent failure
-        queue.acknowledge();
+        try {
+
+            var jsonObj = JSON.parse(message);
+
+            return messageStore.sendAttribute(jsonObj.value);
+
+        } catch(err) {
+            return false;
+        }
     }
 
-}, config.pollTime);
+    return false;
+};
+
+// this is where we hand off polling the queue
+queue.initialize(processMessage, logger.log);
+

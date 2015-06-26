@@ -3,8 +3,8 @@ Kochava Miniproject :: "Postback Delivery"
 architectural design: https://docs.google.com/drawings/d/1YFBGV5UFNv2AfbGh4b-sYHtJ-1LDSFiqmqLBPAvH3Z8/edit?usp=sharing
 git repo: https://github.com/ecook/kochavaMini.git
 
-
-
+to run a responseAgent cd to /home/ed/kochavaMini/responseAgent and type nodejs index.js
+to change the stathat account just edit the messageStoreConfig.json file
 
 
 

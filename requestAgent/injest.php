@@ -36,7 +36,8 @@ echo " getting channel... \n";
 $ch = $connection->channel();
 if($ch->is_open !== true) { echo " no channel object"; };
 
-$ch->queue_declare('hello', false, false, false, false);
+$ch->exchange_declare('attributeExchange', $type = "direct", false, false, $auto_delete = true);
+$ch->queue_bind('attributes', 'attributeExchange', 'attribute');
 
 echo " setting up new message... \n";
 $body = "place holder";
@@ -49,7 +50,7 @@ foreach($obj['data'] as $array) {
         $body = '{"key":"' . $array['key'] . '", "value":"' . $array['value'] . '"}';
         $msg->setBody($body);
         echo " sending message\n";
-        $ch->basic_publish($msg, 'attribute', 'attributeExchange');
+        $ch->basic_publish($msg, 'attributeExchange', 'attribute');
 }
 
 //echo " closing channel and connection.\n";

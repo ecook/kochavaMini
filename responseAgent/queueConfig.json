@@ -1,6 +1,6 @@
 {
   "server":"104.131.128.106",
-  "port":"15672",
+  "port":"5672",
   "user":"guest",
   "password":"guest",
   "queueName":"attributes"

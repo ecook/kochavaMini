@@ -17,7 +17,7 @@ var logMessage = function(message) {
 
 logger.initialize(config.instanceName, logMessage);
 
-// this is to capture Ctrl-C key press
+// this is to capture Ctrl-C key press or process stop event
 process.once('SIGINT', function() {
     clearInterval(interval);
     queue.close();
@@ -26,7 +26,7 @@ process.once('SIGINT', function() {
     process.exit();
 });
 
-// main loop that wires up the end points
+// main loop that wires up the queue and data store end points
 var interval = setInterval(function() {
 
     var message = queue.getMessage();

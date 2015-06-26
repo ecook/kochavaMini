@@ -13,22 +13,19 @@ exports.isConnected = function() {
 
 };
 
-
 exports.initialize = function(){
-    var url = 'amqp://' + config.user + ':' + config.password + '@' + config.server + ':' + config.port;
+    var url = 'amqp://' + config.user + ':' + config.password + '@' + config.server + ':' + config.port + '/';
     console.log('attempt to connect to queue: ' + url);
-    amqp.connect(url).then( function(conn){
-        this.connection = conn;
+    this.connection = amqp.connect(url);
 
-        this.connection.createChannel().then(function(ch){
+    this.connection.then(function(conn){
+        return conn.createChannel().then(function(ch) {
+            ch.assertQueue('attributes', {durable: true, autoDelete: false, exclusive: false});
+            console.log('channel confirmed');
             this.channel = ch;
-            this.channel.assertQueue('attributes');
-        }).then(function() {
-            console.log('create channel failed');
-        }).then(function() {
-            console.log('create connection failed');
         })
     });
+
 };
 
 exports.sendMessage = function(exchange, messageObject) {
@@ -38,15 +35,15 @@ exports.sendMessage = function(exchange, messageObject) {
 };
 
 exports.getMessage = function() {
-    if (channel) {
+    if (this.channel) {
 
-        var stringMessage = this.channel.consume('attributes', function (msg) {
-            return msg.content.toString();
+        return this.channel.consume('attributes', function (msg) {
+
+            var jsonObj = JSON.parse(msg.content.toString());
+
+            return jsonObj;
         });
 
-        var jsonObj = JSON.parse(stringMessage);
-
-        return jsonObj;
     } else {
         console.log('getMessage: channel not available');
         return null;
